@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.5.2">
+<eagle version="9.2.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -6986,8 +6986,8 @@ by exp-lbrs.ulp</description>
 <instance part="SUPPLY12" gate="G$1" x="116.84" y="10.16" smashed="yes" rot="R90">
 <attribute name="VALUE" x="114.046" y="10.16" size="1.778" layer="96" rot="R90" align="bottom-center"/>
 </instance>
-<instance part="SUPPLY13" gate="G$1" x="157.48" y="5.08" smashed="yes">
-<attribute name="VALUE" x="157.48" y="7.874" size="1.778" layer="96" align="bottom-center"/>
+<instance part="SUPPLY13" gate="G$1" x="152.4" y="5.08" smashed="yes" rot="R180">
+<attribute name="VALUE" x="152.4" y="2.286" size="1.778" layer="96" rot="R180" align="bottom-center"/>
 </instance>
 <instance part="SUPPLY14" gate="G$1" x="116.84" y="15.24" smashed="yes" rot="R90">
 <attribute name="VALUE" x="114.046" y="15.24" size="1.778" layer="96" rot="R90" align="bottom-center"/>
@@ -8182,7 +8182,7 @@ by exp-lbrs.ulp</description>
 <segment>
 <pinref part="B2" gate="G$1" pin="LV"/>
 <pinref part="SUPPLY13" gate="G$1" pin="3.3V"/>
-<wire x1="157.48" y1="5.08" x2="165.1" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="5.08" x2="165.1" y2="5.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="D13" class="0">
@@ -8207,20 +8207,20 @@ by exp-lbrs.ulp</description>
 <net name="3.3V_SCL" class="0">
 <segment>
 <pinref part="J8" gate="G$1" pin="SCL"/>
-<wire x1="147.32" y1="12.7" x2="160.02" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="160.02" y1="12.7" x2="160.02" y2="7.62" width="0.1524" layer="91"/>
+<wire x1="147.32" y1="12.7" x2="149.86" y2="12.7" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="12.7" x2="149.86" y2="7.62" width="0.1524" layer="91"/>
 <pinref part="B2" gate="G$1" pin="LV_RXO_1"/>
-<wire x1="160.02" y1="7.62" x2="165.1" y2="7.62" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="7.62" x2="165.1" y2="7.62" width="0.1524" layer="91"/>
 <label x="147.32" y="12.7" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="3.3V_SDA" class="0">
 <segment>
 <pinref part="J8" gate="G$1" pin="SDA"/>
-<wire x1="147.32" y1="15.24" x2="162.56" y2="15.24" width="0.1524" layer="91"/>
-<wire x1="162.56" y1="15.24" x2="162.56" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="147.32" y1="15.24" x2="152.4" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="15.24" x2="152.4" y2="10.16" width="0.1524" layer="91"/>
 <pinref part="B2" gate="G$1" pin="LV_TXI_1"/>
-<wire x1="162.56" y1="10.16" x2="165.1" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="10.16" x2="165.1" y2="10.16" width="0.1524" layer="91"/>
 <label x="147.32" y="15.24" size="1.778" layer="95"/>
 </segment>
 </net>
