@@ -1,3 +1,21 @@
+#include <Wire.h>
+#define SLAVE_ADDRESS 0x03
+byte outputArray[10];
+
+#include <Servo.h>
+
+Servo myservo1;//lift
+Servo myservo2;//rotate claw
+Servo myservo3;//claw
+Servo myservo4;//main lift
+
+byte servoByte1 = 100;
+byte servoByte2 = 90;
+byte servoByte3 = 50;
+byte servoByte4 = 50;
+
+#define PI_ENABLE_PIN 34
+#define PI_SHARED_PIN 35
 
 #define M1_PWM  6
 #define M1_A  22
@@ -32,6 +50,23 @@
 
 void setup() {
 
+  // Set up I2C communication
+  Wire.begin(9);
+  Wire.onReceive(receiveData);
+  Wire.onRequest(sendData);
+  Wire.setClock(1000000);
+
+
+  myservo1.attach(2);
+  myservo2.attach(3);
+  myservo3.attach(4);
+  myservo4.attach(5);
+
+  myservo1.write(100);//lift
+  myservo2.write(90);//rotate claw
+  myservo3.write(50);//claw
+  myservo4.write(50);//main lift
+
   //initiate all the pins for the motors
   pinMode(M1_PWM, OUTPUT);
   pinMode(M1_A, OUTPUT);
@@ -57,57 +92,29 @@ void setup() {
   pinMode(M6_A, OUTPUT);
   pinMode(M6_B, OUTPUT);
 
+  pinMode(PI_ENABLE_PIN, OUTPUT);
+
+  //Allow the pi to continue
+  digitalWrite(PI_ENABLE_PIN, LOW);
+
   Serial.begin(115200);
-   
-
-  for(int i=0;i<255;i++)
-  {
- motorMove(6,i);
- motorMove(5,i);
- motorMove(4,i);
- motorMove(3,i);
- motorMove(2,i);
- motorMove(1,i); 
- delay(10);   
-  }
-
-delay(1000); 
-  
-    for(int i=0;i<510;i++)
-  {
- motorMove(6,255-i);
- motorMove(5,255-i);
- motorMove(4,255-i);
- motorMove(3,255-i);
- motorMove(2,255-i);
- motorMove(1,255-i); 
- delay(10);   
-  }
-
-    for(int i=0;i<255;i++)
-  {
- motorMove(6,-255+i);
- motorMove(5,-255+i);
- motorMove(4,-255+i);
- motorMove(3,-255+i);
- motorMove(2,-255+i);
- motorMove(1,-255+i); 
- delay(10);   
-  }
-
- motorMove(6,100);
- motorMove(5,100);
- motorMove(4,100);
- motorMove(3,100);
- motorMove(2,100);
- motorMove(1,100); 
-
+  Serial.println("Starting Robo-Mantis");
 }
 
-void motorMove(byte motorNumber,int set_speed)
+void motorStop()
+{
+  motorMove(1, 0);
+  motorMove(2, 0);
+  motorMove(3, 0);
+  motorMove(4, 0);
+  motorMove(5, 0);
+  motorMove(6, 0);
+}
+
+void motorMove(byte motorNumber, int set_speed)
 {
   //set speed can be a number between -255 to 255
-   byte pwmPin, maPin, mbPin;
+  byte pwmPin, maPin, mbPin;
 
   switch (motorNumber)
   {
@@ -146,20 +153,20 @@ void motorMove(byte motorNumber,int set_speed)
       break;
   }
 
-  if(set_speed >= 0)
+  if (set_speed >= 0)
   {
-  digitalWrite(mbPin, LOW);
-  digitalWrite(maPin, HIGH);
-  
+    digitalWrite(mbPin, LOW);
+    digitalWrite(maPin, HIGH);
+
   }
-  else if(set_speed < 0)
+  else if (set_speed < 0)
   {
-  digitalWrite(maPin, LOW);
-  digitalWrite(mbPin, HIGH);
+    digitalWrite(maPin, LOW);
+    digitalWrite(mbPin, HIGH);
   }
-  
+
   analogWrite(pwmPin, abs(set_speed));
-  
+
 }
 
 void motorTest(byte motorNumber, unsigned int delay_time)
@@ -248,12 +255,86 @@ void motorTest(byte motorNumber, unsigned int delay_time)
 
 // the loop routine runs over and over again forever:
 void loop() {
+  receiveData();
 
   //motorTest(5,1);
 
-  
-//  for (int i = 0; i < 6; i++)
-//  {
-//    motorTest(i+1,20);
-//  }
+  //  for (int i = 0; i < 6; i++)
+  //  {
+  //    motorTest(i+1,20);
+  //  }
+}
+
+
+void receiveData() {
+  //Commands are given as a single byte, where the bits are parsed as shown:
+  // XXYYYZZZ 1 BYTE
+
+  if (Wire.available())
+  {
+    byte receivedByte = Wire.read();
+    Serial.print(receivedByte);
+    switch (receivedByte)
+    {
+      case 0:
+        motorStop();
+        break;
+      case 1:
+        byte speedByteM1 = Wire.read();
+        byte speedByteM2 = Wire.read();
+        byte speedByteM3 = Wire.read();
+        byte speedByteM4 = Wire.read();
+        byte speedByteM5 = Wire.read();
+        byte speedByteM6 = Wire.read();
+        Serial.print(" ");
+        Serial.print(speedByteM1);
+        Serial.print(" ");
+        Serial.print(speedByteM2);
+        Serial.print(" ");
+        Serial.print(speedByteM3);
+        Serial.print(" ");
+        Serial.print(speedByteM4);
+        Serial.print(" ");
+        Serial.print(speedByteM5);
+        Serial.print(" ");
+        Serial.print(speedByteM6);
+
+        motorMove(1, 2 * (speedByteM1 - 127));
+        motorMove(2, 2 * (speedByteM2 - 127));
+        motorMove(3, 2 * (speedByteM3 - 127));
+        motorMove(4, 2 * (speedByteM4 - 127));
+        motorMove(5, 2 * (speedByteM5 - 127));
+        motorMove(6, 2 * (speedByteM6 - 127));
+
+        break;
+      case 2:
+        servoByte1 = Wire.read();
+//        servoByte2 = Wire.read();
+//        servoByte3 = Wire.read();
+//        servoByte4 = Wire.read();
+        Serial.print(" ");
+        Serial.print(servoByte1);
+//        Serial.print(" ");
+//        Serial.print(servoByte2);
+//        Serial.print(" ");
+//        Serial.print(servoByte3);
+//        Serial.print(" ");
+//        Serial.print(servoByte4);
+        myservo1.write(servoByte1);
+//        myservo2.write(servoByte2);
+//        myservo3.write(servoByte3);
+//        myservo4.write(servoByte4);
+
+        break;
+      case 3:
+        break;
+      default:
+        break;
+    }
+    Serial.print(" end\n");
+  }
+}
+
+void sendData() {
+  Wire.write(outputArray, 10);  // Send IR sensor data and current batt voltage in one block
 }
