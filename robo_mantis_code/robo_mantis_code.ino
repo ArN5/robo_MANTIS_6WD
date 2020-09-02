@@ -1,5 +1,4 @@
 #include <Wire.h>
-#define SLAVE_ADDRESS 0x03
 byte outputArray[10];
 
 #include <Servo.h>
@@ -259,10 +258,10 @@ void loop() {
 
   //motorTest(5,1);
 
-  //  for (int i = 0; i < 6; i++)
-  //  {
-  //    motorTest(i+1,20);
-  //  }
+//    for (int i = 0; i < 6; i++)
+//    {
+//      motorTest(i+1,1);
+//    }
 }
 
 
