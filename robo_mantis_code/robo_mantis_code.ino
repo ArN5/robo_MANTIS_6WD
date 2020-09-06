@@ -97,7 +97,57 @@ void setup() {
   digitalWrite(PI_ENABLE_PIN, LOW);
 
   Serial.begin(115200);
-  Serial.println("Starting Robo-Mantis");
+  Serial.println("09/05/2020 Starting Robo-Mantis");
+}
+
+void updateCurrentSense()
+{
+   //the current will only be positive 
+   //IC it cant measure negative currents
+   //pololu site https://www.pololu.com/product/708
+   //For the VNH2SP30 version, the current sense (CS) 
+   //pins will output approximately 0.13 volts per
+   //amp of output current.
+    int val1 = analogRead(M1_CURR_SENSE);
+    int val2 = analogRead(M2_CURR_SENSE);
+    int val3 = analogRead(M3_CURR_SENSE);
+    int val4 = analogRead(M4_CURR_SENSE);
+    int val5 = analogRead(M5_CURR_SENSE);
+    int val6 = analogRead(M6_CURR_SENSE);
+    
+    float motor1Current = analogRead(M1_CURR_SENSE)*37.03;
+    float motor2Current = analogRead(M2_CURR_SENSE)*37.03;
+    float motor3Current = analogRead(M3_CURR_SENSE)*37.03;
+    float motor4Current = analogRead(M4_CURR_SENSE)*37.03;
+    float motor5Current = analogRead(M5_CURR_SENSE)*37.03;
+    float motor6Current = analogRead(M6_CURR_SENSE)*37.03;
+ 
+    outputArray[0]=val1/4;
+    outputArray[1]=val2/4;
+    outputArray[2]=val3/4;
+    outputArray[3]=val4/4;
+    outputArray[4]=val5/4;
+    outputArray[5]=val6/4;
+
+    //total current fed to all the motors
+    float totalMotorCurrent = motor1Current+motor2Current
+    +motor3Current+motor4Current+
+    motor5Current+motor6Current;
+     Serial.print(motor1Current);
+     Serial.print(", ");
+     Serial.print(motor2Current);
+     Serial.print(", ");
+     Serial.print(motor3Current);
+     Serial.print(", ");
+     Serial.print(motor4Current);
+     Serial.print(", ");
+     Serial.print(motor5Current);
+     Serial.print(", ");
+     Serial.print(motor6Current);
+     Serial.print(", ");
+     Serial.print(totalMotorCurrent);
+     Serial.println("");
+
 }
 
 void motorStop()
@@ -255,9 +305,9 @@ void motorTest(byte motorNumber, unsigned int delay_time)
 // the loop routine runs over and over again forever:
 void loop() {
   receiveData();
-
+ updateCurrentSense();
+//delay(50);
   //motorTest(5,1);
-
 //    for (int i = 0; i < 6; i++)
 //    {
 //      motorTest(i+1,1);
@@ -272,31 +322,35 @@ void receiveData() {
   if (Wire.available())
   {
     byte receivedByte = Wire.read();
-    Serial.print(receivedByte);
+    //Serial.println(receivedByte);
     switch (receivedByte)
     {
       case 0:
+      {
         motorStop();
         break;
+      }
       case 1:
+      {
         byte speedByteM1 = Wire.read();
         byte speedByteM2 = Wire.read();
         byte speedByteM3 = Wire.read();
         byte speedByteM4 = Wire.read();
         byte speedByteM5 = Wire.read();
         byte speedByteM6 = Wire.read();
-        Serial.print(" ");
-        Serial.print(speedByteM1);
-        Serial.print(" ");
-        Serial.print(speedByteM2);
-        Serial.print(" ");
-        Serial.print(speedByteM3);
-        Serial.print(" ");
-        Serial.print(speedByteM4);
-        Serial.print(" ");
-        Serial.print(speedByteM5);
-        Serial.print(" ");
-        Serial.print(speedByteM6);
+        
+//        Serial.print(" ");
+//        Serial.print(speedByteM1);
+//        Serial.print(" ");
+//        Serial.print(speedByteM2);
+//        Serial.print(" ");
+//        Serial.print(speedByteM3);
+//        Serial.print(" ");
+//        Serial.print(speedByteM4);
+//        Serial.print(" ");
+//        Serial.print(speedByteM5);
+//        Serial.print(" ");
+//        Serial.print(speedByteM6);
 
         motorMove(1, 2 * (speedByteM1 - 127));
         motorMove(2, 2 * (speedByteM2 - 127));
@@ -304,36 +358,34 @@ void receiveData() {
         motorMove(4, 2 * (speedByteM4 - 127));
         motorMove(5, 2 * (speedByteM5 - 127));
         motorMove(6, 2 * (speedByteM6 - 127));
-
         break;
-      case 2:
-        servoByte1 = Wire.read();
-//        servoByte2 = Wire.read();
-//        servoByte3 = Wire.read();
-//        servoByte4 = Wire.read();
-        Serial.print(" ");
-        Serial.print(servoByte1);
-//        Serial.print(" ");
-//        Serial.print(servoByte2);
-//        Serial.print(" ");
-//        Serial.print(servoByte3);
-//        Serial.print(" ");
-//        Serial.print(servoByte4);
-        myservo1.write(servoByte1);
-//        myservo2.write(servoByte2);
-//        myservo3.write(servoByte3);
-//        myservo4.write(servoByte4);
-
-        break;
-      case 3:
-        break;
+      }
       default:
+      {
         break;
+      }
     }
-    Serial.print(" end\n");
+    if(receivedByte==2)
+    {
+        servoByte1 = Wire.read();
+        servoByte2 = Wire.read();
+        servoByte3 = Wire.read();
+        servoByte4 = Wire.read();
+         
+//        Serial.print(servoByte1);
+//        Serial.print(servoByte2);
+//        Serial.print(servoByte3);
+//        Serial.print(servoByte4);
+
+        myservo1.write(servoByte1);
+        myservo2.write(servoByte2);
+        myservo3.write(servoByte3);
+        myservo4.write(servoByte4);
+    }
+//    Serial.print(" end\n");
   }
 }
 
 void sendData() {
-  Wire.write(outputArray, 10);  // Send IR sensor data and current batt voltage in one block
+  Wire.write(outputArray, 10);  // Send current sense data
 }
