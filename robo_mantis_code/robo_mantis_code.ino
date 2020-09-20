@@ -55,7 +55,8 @@ Servo myservo4;//main lift
 #define M6_CURR_SENSE 61
 
 #define SLAVE_I2C_ADDRESS 9
-#define I2C_FREQ 1000000
+#define I2C_FREQ 10000
+//pi has it set to dtparam=i2c_baudrate=10000
 #define BAUD_RATE 115200
 
 byte servoByte1 = ZERO_POS1;
@@ -166,13 +167,20 @@ void updateCurrentSense()
   //For the VNH2SP30 version, the current sense (CS)
   //pins will output approximately 0.13 volts per
   //amp of output current.
+  int an1 = analogRead(M1_CURR_SENSE);
+  int an2 = analogRead(M2_CURR_SENSE);
+  int an3 = analogRead(M3_CURR_SENSE);
+  int an4 = analogRead(M4_CURR_SENSE);
+  int an5 = analogRead(M5_CURR_SENSE);
+  int an6 = analogRead(M6_CURR_SENSE);
+  
 
-  double val1 = analogRead(M1_CURR_SENSE) /  ( 1023.0 / (vccMilliVolts * 0.001));
-  double val2 = analogRead(M2_CURR_SENSE) /  ( 1023.0 / (vccMilliVolts * 0.001));
-  double val3 = analogRead(M3_CURR_SENSE) /  ( 1023.0 / (vccMilliVolts * 0.001));
-  double val4 = analogRead(M4_CURR_SENSE) /  ( 1023.0 / (vccMilliVolts * 0.001));
-  double val5 = analogRead(M5_CURR_SENSE) /  ( 1023.0 / (vccMilliVolts * 0.001));
-  double val6 = analogRead(M6_CURR_SENSE) /  ( 1023.0 / (vccMilliVolts * 0.001));
+  double val1 = an1 /  ( 1023.0 / (vccMilliVolts * 0.001));
+  double val2 = an2 /  ( 1023.0 / (vccMilliVolts * 0.001));
+  double val3 = an3 /  ( 1023.0 / (vccMilliVolts * 0.001));
+  double val4 = an4 /  ( 1023.0 / (vccMilliVolts * 0.001));
+  double val5 = an5 /  ( 1023.0 / (vccMilliVolts * 0.001));
+  double val6 = an6 /  ( 1023.0 / (vccMilliVolts * 0.001));
 
   motor1milliAmps = val1 * 37.03;
   motor2milliAmps = val2 * 37.03;
@@ -187,12 +195,12 @@ void updateCurrentSense()
   //reduce resolution from 1024 to 256 by dividing by 4
   //in order to save to byte in output array to send over I2C
   //TODO: NEED TO FIX truncating to zero
-  outputArray[0] = val1 / 4;
-  outputArray[1] = val2 / 4;
-  outputArray[2] = val3 / 4;
-  outputArray[3] = val4 / 4;
-  outputArray[4] = val5 / 4;
-  outputArray[5] = val6 / 4;
+  outputArray[0] = an1 / 4;
+  outputArray[1] = an2 / 4;
+  outputArray[2] = an3 / 4;
+  outputArray[3] = an4 / 4;
+  outputArray[4] = an5 / 4;
+  outputArray[5] = an6 / 4;
 }
 
 void checkOverCurrent()
@@ -351,7 +359,7 @@ void loop() {
   receiveData();
   updateCurrentSense();
   
-  Serial.println(checkInputVCC());
+  //Serial.println(checkInputVCC());
   //printMotorMilliAmps();
   //printOutputArray();
   //Serial.println(readVccMilliVolts());
