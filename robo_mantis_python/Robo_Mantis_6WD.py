@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[127]:
-
 
 import smbus2
 import time
@@ -128,83 +123,6 @@ def set_servos(servo1=100,servo2=90,servo3=50,servo4=90):
                              motor_values) 
     time.sleep(0.01)
     
-#forward(40,3)
-#reverse(10,2)
-# for i in range(6):
-#     set_motor(i,40)
-#forward_left_motors(50)
-#forward_right_motors(50)
-#reverse_right_motors(50)
-
-
-# In[177]:
-
-
-try:
-    forward(127,5)
-    #reverse(127,2)
-except OSError:
-    print("I/O ERROR failed")
-    stop()
-finally:
-    stop()
-
-
-# In[94]:
-
-
-for i in range(50):
-    set_servos(servo2=90-i,servo3=50,servo4=80)
-    time.sleep(0.05)
-
-
-# In[99]:
-
-
-set_servos()
-
-
-# In[102]:
-
-
-turn(-70,0.5)
-
-
-# In[113]:
-
-
-forward(-100,0.5)
-
-
-# In[120]:
-
-
-
-
-
-# In[124]:
-
-
-stop()
-
-
-# In[104]:
-
-
-try:
-    forward(50)
-    turn(-50,0.5)
-    forward(50)
-    turn(-50,0.5)
-    forward(50)
-    turn(-50,0.5)
-    forward(50)
-finally:
-    stop()
-
-
-# In[ ]:
-
 
 
 
